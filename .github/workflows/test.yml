@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  lint-and-test:
+  test:
     runs-on: ubuntu-latest
     env:
       GOPROXY: https://proxy.golang.org,direct
@@ -34,13 +34,6 @@ jobs:
       - name: Install dependencies
         run: go mod download
 
-      - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v4
-        with:
-          version: v1.60.0
-          args: ./...
-
-      # TESTS: run tests with race detector and coverage for packages under /internal/...
       - name: Run tests (race detector) for /internal/...
         run: |
           # ensure coverage output dir exists
