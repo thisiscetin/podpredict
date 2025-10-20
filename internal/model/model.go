@@ -1,16 +1,20 @@
 package model
 
+// Features represents the input features used for prediction.
 type Features struct {
-	GMV           float64
-	Users         float64
-	MarketingCost float64
+	GMV           float64 `json:"gmv"`            // Gross Merchandise Value
+	Users         float64 `json:"users"`          // Number of users
+	MarketingCost float64 `json:"marketing_cost"` // Marketing expenditure
 }
 
+// BEPods represents the predicted number of Back-End Pods.
 type BEPods int
+
+// FEPods represents the predicted number of Front-End Pods.
 type FEPods int
 
-// Model is an interface for predicting FEPods and BEPods.
+// Model defines an interface for predicting FEPods and BEPods based on given features.
 type Model interface {
-	// Predict predicts FEPods and BEPods for given features.
+	// Predict takes Features as input and returns the predicted FEPods, BEPods, and any potential error.
 	Predict(features *Features) (FEPods, BEPods, error)
 }
