@@ -1,0 +1,59 @@
+name: Go CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    env:
+      GOPROXY: https://proxy.golang.org,direct
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            /home/runner/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Setup Go (uses go.mod to pick version)
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Install dependencies
+        run: go mod download
+
+      # LINTING: run golangci-lint (fast-fail)
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v4
+        with:
+          version: v1.59.0      # you can bump to a newer version later
+          args: ./...           # run on all packages; change to ./pkg/... if you want narrower scope
+          # cache is handled by the action automatically
+
+      # TESTS: run tests with race detector and coverage for packages under /pkg
+      - name: Run tests (race detector) for /pkg/...
+        run: |
+          # ensure coverage output dir exists
+          mkdir -p coverage
+          # Run tests with race detector and coverage profile
+          go test ./pkg/... -v -race -covermode=atomic -coverprofile=coverage/coverage.out || (echo "Tests failed" && exit 1)
+
+      - name: Show coverage summary
+        run: |
+          if [ -f coverage/coverage.out ]; then
+            go tool cover -func=coverage/coverage.out
+          else
+            echo "No coverage file found."
+          fi
