@@ -1,5 +1,7 @@
 package model
 
+import "github.com/thisiscetin/podpredict/internal/data/metrics"
+
 // Features represents the input features used for prediction.
 type Features struct {
 	GMV           float64 `json:"gmv"`            // Gross Merchandise Value
@@ -15,6 +17,8 @@ type FEPods int
 
 // Model defines an interface for predicting FEPods and BEPods based on given features.
 type Model interface {
+	// Train trains the model using the provided daily metrics.
+	Train([]metrics.Daily) error
 	// Predict takes Features as input and returns the predicted FEPods, BEPods, and any potential error.
 	Predict(features *Features) (FEPods, BEPods, error)
 }
