@@ -22,16 +22,16 @@ curl -s -X POST https://podpredict.kinematiks.com/predict \
 **podpredict** is a lightweight Go service that predicts the number of **Front-End (FE)** and **Back-End (BE)** Kubernetes pods you’ll need based on daily KPIs:
 
 * **GMV** (Gross Merchandise Value)
-* **Users** (active user count)
-* **Marketing Cost** (spend)
+* **Users** (Active User Count)
+* **Marketing Cost** (Marketing Spend)
 
 It trains two small linear regression models (FE + BE) and exposes a minimal HTTP API for prediction and storage.
 
 ---
 
-## 📈 Model insight
+## 📈 Model insights
 
-During data exploration, additional features like **weekday**, **is_weekend**, or **seasonal flags** were evaluated but showed **no significant correlation** to pod usage.
+During data exploration, additional features like **weekday**, **is_weekend** were evaluated but showed **no significant correlation** to pod usage.
 The most **impactful and consistent predictors** were:
 
 * **GMV** — represents business load
