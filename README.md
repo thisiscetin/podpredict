@@ -1,7 +1,3 @@
-Here’s the updated and final **`README.md`**, now with the Google Sheets data source clearly listed right at the top, along with the live demo and quick example usage.
-
----
-
 # podpredict
 
 ![Tests](https://github.com/thisiscetin/podpredict/actions/workflows/test.yml/badge.svg)
@@ -17,7 +13,7 @@ You can try it instantly with:
 ```bash
 curl -s -X POST https://podpredict.kinematiks.com/predict \
   -H 'Content-Type: application/json' \
-  -d '{"gmv":1000000,"users":90000,"marketing_cost":150000}' | jq
+  -d '{"gmv":10000000,"users":90000,"marketing_cost":150000}' | jq
 ```
 
 ---
@@ -29,6 +25,19 @@ curl -s -X POST https://podpredict.kinematiks.com/predict \
 * **Marketing Cost** (spend)
 
 It trains two small linear regression models (FE + BE) and exposes a minimal HTTP API for prediction and storage.
+
+---
+
+## 📈 Model insight
+
+During data exploration, additional features like **weekday**, **is_weekend**, or **seasonal flags** were evaluated but showed **no significant correlation** to pod usage.
+The most **impactful and consistent predictors** were:
+
+* **GMV** — represents business load
+* **Users** — proxy for frontend traffic
+* **Marketing Cost** — a driver of campaign-related backend load
+
+Hence, the prediction engine was trained exclusively on these **three key variables** for a simpler, explainable, and reliable model.
 
 ---
 
