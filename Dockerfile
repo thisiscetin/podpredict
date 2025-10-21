@@ -1,37 +1,21 @@
-# syntax=docker/dockerfile:1.7
-
 # 1) Build stage
-FROM golang:1.25 as builder
-
+FROM golang:1.25 AS builder
 WORKDIR /src
 
-# Copy module files first to maximize layer caching
+# Cache-friendly: copy deps first, then download
 COPY go.mod go.sum ./
-RUN --mount=type=cache,target=/go/pkg/mod \
-    go mod download
+RUN go mod download
 
-# Now copy the rest of the source
+# Copy the rest and build a static binary
 COPY . .
+RUN CGO_ENABLED=0 go build -trimpath -buildvcs=false \
+    -ldflags="-s -w" \
+    -o /out/server ./cmd/server
 
-# Build args for reproducible builds and optional versioning
-ARG TARGETOS=linux
-ARG TARGETARCH=amd64
-ARG VERSION=dev
-ARG COMMIT=unknown
-ARG BUILD_DATE
-
-# Produce a static, trimmed binary
-RUN --mount=type=cache,target=/go/pkg/mod \
-    CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
-    go build -trimpath -buildvcs=false \
-      -ldflags="-s -w" \
-      -o /out/server ./cmd/server
-
-# 2) Runtime stage
-# Use distroless base (has CA certs, runs as non-root)
+# 2) Runtime stage (non-root, CA certs included)
 FROM gcr.io/distroless/base-debian12:nonroot
 
-# Metadata (OCI labels)
+# Optional metadata (can be set via --build-arg)
 ARG VERSION=dev
 ARG COMMIT=unknown
 ARG BUILD_DATE
@@ -46,7 +30,6 @@ LABEL org.opencontainers.image.title="podpredict" \
 WORKDIR /app
 COPY --from=builder /out/server /app/server
 
-# Non-root by default in this image
 USER nonroot:nonroot
 EXPOSE 7000
 ENTRYPOINT ["/app/server"]
