@@ -156,5 +156,7 @@ MIT — see [LICENSE](LICENSE)
 ---
 
 **🌐 Live version:** [https://podpredict.kinematiks.com/predictions](https://podpredict.kinematiks.com/predictions)
+
 **📄 Data source:** [Google Sheet](https://docs.google.com/spreadsheets/d/1fMGuVN9FY5jWt_YHH0MPoIiriYW4AJjMaHoDW-2Jdm4)
+
 **🐳 Docker image:** [`thisiscetin/podpredict:0.0.1`](https://hub.docker.com/r/thisiscetin/podpredict)
