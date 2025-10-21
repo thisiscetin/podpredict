@@ -17,6 +17,7 @@ require (
 	github.com/googleapis/enterprise-certificate-proxy v0.3.6 // indirect
 	github.com/googleapis/gax-go/v2 v2.15.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/sajari/regression v1.0.1 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.61.0 // indirect
@@ -28,6 +29,7 @@ require (
 	golang.org/x/oauth2 v0.32.0 // indirect
 	golang.org/x/sys v0.36.0 // indirect
 	golang.org/x/text v0.29.0 // indirect
+	gonum.org/v1/gonum v0.16.0 // indirect
 	google.golang.org/api v0.252.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251002232023-7c0ddcbb5797 // indirect
 	google.golang.org/grpc v1.75.1 // indirect

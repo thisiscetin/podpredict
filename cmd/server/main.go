@@ -7,7 +7,7 @@ import (
 
 	"github.com/thisiscetin/podpredict/internal/data/fetcher/gsheets"
 	"github.com/thisiscetin/podpredict/internal/model"
-	"github.com/thisiscetin/podpredict/internal/model/regressor"
+	"github.com/thisiscetin/podpredict/internal/model/linreg"
 )
 
 func main() {
@@ -34,7 +34,7 @@ func main() {
 		log.Fatalf("failed to fetch data: %v", err)
 	}
 
-	m := regressor.NewModel()
+	m := linreg.NewModel()
 	if err := m.Train(fr); err != nil {
 		log.Fatalf("failed to train model: %v", err)
 	}
