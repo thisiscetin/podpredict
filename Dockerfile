@@ -48,5 +48,5 @@ COPY --from=builder /out/server /app/server
 
 # Non-root by default in this image
 USER nonroot:nonroot
-EXPOSE 8080
+EXPOSE 7000
 ENTRYPOINT ["/app/server"]
