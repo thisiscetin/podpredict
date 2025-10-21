@@ -1,0 +1,22 @@
+# Go
+**/*.test
+**/*.out
+**/*.log
+bin/
+dist/
+build/
+
+# Modules & cache (the builder uses its own cache mount)
+vendor/
+.gomodcache/
+.gocache/
+
+# VCS
+.git
+.gitignore
+.gitattributes
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
