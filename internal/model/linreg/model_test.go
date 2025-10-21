@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/thisiscetin/podpredict/internal/model"
 
-	"github.com/thisiscetin/podpredict/internal/data/metrics"
+	"github.com/thisiscetin/podpredict/internal/metrics"
 )
 
 // makeDay constructs a Daily with both FE/BE pods set.
@@ -42,7 +42,7 @@ func TestLinearModel_TrainPredict_PerfectFit(t *testing.T) {
 		makeDay(base.AddDate(0, 0, 4), 300, 30, 10, int(trueFE(300, 30, 10)), int(trueBE(300, 30, 10))),
 	}
 
-	m := NewLinearModel()
+	m := NewModel()
 	require.NoError(t, m.Train(rows))
 
 	// In-sample prediction: exact integers → equal after rounding.
@@ -59,7 +59,7 @@ func TestLinearModel_TrainPredict_PerfectFit(t *testing.T) {
 }
 
 func TestLinearModel_Train_ErrorOnNoPods(t *testing.T) {
-	m := NewLinearModel()
+	m := NewModel()
 	base := time.Date(2025, 2, 1, 0, 0, 0, 0, time.UTC)
 	// Both pods nil
 	r1, err := metrics.NewDaily(base, 100, 10, 5, nil, nil)
@@ -82,7 +82,7 @@ func TestLinearModel_RealData(t *testing.T) {
 		makeDay(time.Now().AddDate(0, 0, 3), 19904689.00, 79045, 147847, 20, 9),
 	}
 
-	m := NewLinearModel()
+	m := NewModel()
 	require.NoError(t, m.Train(rows))
 
 	fe, be, err := m.Predict(&model.Features{GMV: 9928743.00, Users: 76955, MarketingCost: 187234})
@@ -101,7 +101,7 @@ func TestLinearModel_MinClamp_ZeroishPredictionsBecomeOne(t *testing.T) {
 		makeDay(time.Now().AddDate(0, 0, 4), 55, 12, 5, 0, 0),
 	}
 
-	m := NewLinearModel()
+	m := NewModel()
 	require.NoError(t, m.Train(rows))
 
 	fe, be, err := m.Predict(&model.Features{GMV: 15.4, Users: 16, MarketingCost: 2})
@@ -120,7 +120,7 @@ func TestLinearModel_MinClamp_NegativePredictionsBecomeOne(t *testing.T) {
 		makeDay(time.Now().AddDate(0, 0, 4), 12, 18, 5, 1, 1),
 	}
 
-	m := NewLinearModel()
+	m := NewModel()
 	require.NoError(t, m.Train(rows))
 
 	fe, be, err := m.Predict(&model.Features{GMV: 20, Users: 40, MarketingCost: 5}) // likely negative raw

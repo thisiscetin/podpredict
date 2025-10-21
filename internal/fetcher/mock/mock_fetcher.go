@@ -2,7 +2,7 @@ package mock
 
 import (
 	"github.com/stretchr/testify/mock"
-	"github.com/thisiscetin/podpredict/internal/data/metrics"
+	"github.com/thisiscetin/podpredict/internal/metrics"
 )
 
 // MockFetcher is a mock implementation of the Fetcher interface.

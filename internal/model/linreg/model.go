@@ -5,7 +5,7 @@ import (
 	"math"
 
 	"github.com/sajari/regression"
-	"github.com/thisiscetin/podpredict/internal/data/metrics"
+	"github.com/thisiscetin/podpredict/internal/metrics"
 	"github.com/thisiscetin/podpredict/internal/model"
 )
 

@@ -1,6 +1,6 @@
 package model
 
-import "github.com/thisiscetin/podpredict/internal/data/metrics"
+import "github.com/thisiscetin/podpredict/internal/metrics"
 
 // Features represents the input features used for prediction.
 type Features struct {

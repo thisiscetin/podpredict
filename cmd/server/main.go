@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/thisiscetin/podpredict/internal/data/fetcher/gsheets"
+	"github.com/thisiscetin/podpredict/internal/fetcher/gsheets"
 	"github.com/thisiscetin/podpredict/internal/model"
 	"github.com/thisiscetin/podpredict/internal/model/linreg"
 )

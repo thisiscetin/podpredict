@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/thisiscetin/podpredict/internal/data/fetcher"
-	"github.com/thisiscetin/podpredict/internal/data/metrics"
+	"github.com/thisiscetin/podpredict/internal/fetcher"
+	"github.com/thisiscetin/podpredict/internal/metrics"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"
