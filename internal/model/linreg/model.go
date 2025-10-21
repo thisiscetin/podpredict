@@ -3,6 +3,7 @@ package linreg
 import (
 	"errors"
 	"math"
+	"sync/atomic"
 
 	"github.com/sajari/regression"
 	"github.com/thisiscetin/podpredict/internal/metrics"
@@ -14,7 +15,7 @@ type linearModel struct {
 	fe *regression.Regression
 	be *regression.Regression
 	// trained ensures Predict() is only available after a successful Train()
-	trained bool
+	trained atomic.Bool
 }
 
 // NewModel returns a Model backed by sajari/regression.
@@ -67,14 +68,14 @@ func (m *linearModel) Train(rows []metrics.Daily) error {
 
 	m.fe = fe
 	m.be = be
-	m.trained = true
+	m.trained.Store(true)
 	return nil
 }
 
 // Predict returns rounded FE/BE pod counts for the supplied features.
 // Guarantees a minimum of 1 pod for both FE and BE.
 func (m *linearModel) Predict(f *model.Features) (model.FEPods, model.BEPods, error) {
-	if !m.trained {
+	if !m.trained.Load() {
 		return 0, 0, errors.New("model not trained")
 	}
 	in := []float64{f.GMV, f.Users, f.MarketingCost}

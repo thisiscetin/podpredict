@@ -2,10 +2,12 @@ package inmemory_test
 
 import (
 	"context"
+	"strconv"
 	"sync"
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -17,6 +19,9 @@ import (
 // mkPred creates a deterministic, distinguishable prediction for tests.
 func mkPred(i int) store.Prediction {
 	return store.Prediction{
+		// Derive a stable UUID from the index 'i' so repeated calls with the same
+		// argument produce identical IDs (critical for equality assertions).
+		ID:        uuid.NewSHA1(uuid.NameSpaceOID, []byte(strconv.Itoa(i))).String(),
 		Timestamp: time.Unix(1_700_000_000+int64(i), 0).UTC(),
 		Input: model.Features{
 			GMV:           float64(100*i + 1),

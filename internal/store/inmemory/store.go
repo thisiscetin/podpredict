@@ -12,7 +12,7 @@ type impl struct {
 	sync.RWMutex
 }
 
-func (i *impl) Append(ctx context.Context, r store.Prediction) error {
+func (i *impl) Append(_ context.Context, r store.Prediction) error {
 	i.Lock()
 	defer i.Unlock()
 

@@ -2,10 +2,15 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/thisiscetin/podpredict/internal/api"
 	"github.com/thisiscetin/podpredict/internal/fetcher"
 	"github.com/thisiscetin/podpredict/internal/fetcher/mock"
@@ -80,6 +85,7 @@ func main() {
 		}
 
 		err := st.Append(ctx, store.Prediction{
+			ID:        uuid.New().String(),
 			Timestamp: m.Date,
 			Input:     features,
 			FEPods:    int(fePods),
@@ -94,9 +100,26 @@ func main() {
 	if err != nil {
 		log.Fatalf("api init failed: %v", err)
 	}
-	addr := ":8080"
-	log.Printf("listening on %s", addr)
-	log.Fatal(http.ListenAndServe(addr, api.Routes(h)))
+	srv := &http.Server{
+		Addr:              ":8080",
+		Handler:           api.Routes(h),
+		ReadTimeout:       5 * time.Second,
+		ReadHeaderTimeout: 5 * time.Second,
+		WriteTimeout:      10 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
+
+	go func() {
+		log.Printf("listening on %s", srv.Addr)
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatalf("server error: %v", err)
+		}
+	}()
+
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+	<-sig
+	_ = srv.Shutdown(ctx)
 }
 
 //spreadSheetID := os.Getenv("GOOGLE_SHEETS_SPREADSHEET_ID")

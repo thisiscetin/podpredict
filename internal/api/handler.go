@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/thisiscetin/podpredict/internal/fetcher"
 	"github.com/thisiscetin/podpredict/internal/model"
 	"github.com/thisiscetin/podpredict/internal/store"
@@ -78,7 +79,8 @@ func (h *Handler) Predict(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rec := store.Prediction{
-		Timestamp: time.Now(),
+		ID:        uuid.New().String(),
+		Timestamp: time.Now().UTC(),
 		Input:     in,
 		FEPods:    int(fe),
 		BEPods:    int(be),

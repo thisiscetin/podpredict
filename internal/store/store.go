@@ -8,6 +8,7 @@ import (
 )
 
 type Prediction struct {
+	ID        string         `json:"id"`
 	Timestamp time.Time      `json:"timestamp"`
 	Input     model.Features `json:"input"`
 	FEPods    int            `json:"fe_pods"`

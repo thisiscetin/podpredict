@@ -20,11 +20,9 @@ Under the hood, it trains **two separate multivariate linear regression models**
 * [High‑level architecture](#high-level-architecture)
 * [API quickstart](#api-quickstart)
 * [Running locally](#running-locally)
-
     * [With Go](#with-go)
     * [With Docker](#with-docker)
 * [Training data sources](#training-data-sources)
-
     * [Google Sheets format](#google-sheets-format)
 * [Model details](#model-details)
 * [Project layout](#project-layout)
@@ -40,21 +38,20 @@ Under the hood, it trains **two separate multivariate linear regression models**
 
 ```
 +-----------------+          +-------------------+          +---------------------------+
-| Google Sheets   |  Fetch   | Fetcher (gsheets) |  Daily   | Model (linreg: FE + BE)   |
-| (Sheet1!A:F)    +--------->+ or mock fetcher   +--------->+ (github.com/sajari/...)   |
+| Google Sheets   |  Fetch   | Fetcher (gsheets) |  Metrics | Model (linreg: FE + BE)   |
+|                 +--------->+ or mock fetcher   +--------->+                           |
 +-----------------+          +-------------------+    KPIs  +------------+--------------+
                                                      (GMV, Users, MC)   |
                                                                         |
                                           +-----------------------------v----------------------------+
-                                          |             HTTP API (net/http, ServeMux)               |
-                                          |  /predict, /predictions, /healthz                       |
+                                          |  HTTP API (net/http, ServeMux)                           |
+                                          |  /predict, /predictions, /healthz                        |
                                           +-----------------------------+----------------------------+
                                                                         |
                                                                         v
                                                             +-----------------------+
                                                             | Store (in‑memory)     |
-                                                            | []Prediction with RW  |
-                                                            | lock & defensive copy |
+                                                            | []Prediction          |
                                                             +-----------------------+
 ```
 
@@ -86,6 +83,7 @@ By default the server listens on **`http://localhost:8080`**.
 
 ```json
 {
+  "id":"c9d9e0dc-4617-495e-a8c8-6ababead2571",
   "timestamp": "2025-01-02T12:34:56Z",
   "input": {
     "gmv": 13224723,
@@ -111,8 +109,13 @@ Returns all predictions stored so far (most recent first/last depending on the s
 ```json
 [
   {
+    "id":"c9d9e0dc-4617-495e-a8c8-6ababead2571",
     "timestamp": "2025-01-02T12:34:56Z",
-    "input": { "gmv": 10, "users": 1, "marketing_cost": 1 },
+    "input": { 
+      "gmv": 10, 
+      "users": 1, 
+      "marketing_cost": 1
+    },
     "fe_pods": 5,
     "be_pods": 4
   }
