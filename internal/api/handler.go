@@ -108,6 +108,39 @@ func (h *Handler) ListPredictions(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, items)
 }
 
+// GET /healthz
+// Returns JSON with status info about model and store
+func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
+	defer cancel()
+
+	status := struct {
+		Status  string `json:"status"`
+		StoreOK bool   `json:"store_ok"`
+		ModelOK bool   `json:"model_ok"`
+		Now     string `json:"timestamp"`
+	}{
+		Status:  "ok",
+		ModelOK: true,
+		Now:     time.Now().UTC().Format(time.RFC3339),
+	}
+
+	// Check store health
+	if _, err := h.store.List(ctx); err != nil {
+		status.StoreOK = false
+		status.Status = "degraded"
+	} else {
+		status.StoreOK = true
+	}
+
+	writeJSON(w, http.StatusOK, status)
+}
+
 // Optional: expose retraining for future endpoints/CLI
 func (h *Handler) Retrain(ctx context.Context) error {
 	data, err := h.fetcher.Fetch()

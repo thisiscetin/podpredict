@@ -9,6 +9,14 @@ type Features struct {
 	MarketingCost float64 `json:"marketing_cost"` // Marketing expenditure
 }
 
+func FeaturesFromDaily(d metrics.Daily) Features {
+	return Features{
+		GMV:           d.GMV,
+		Users:         d.Users,
+		MarketingCost: d.MarketingCost,
+	}
+}
+
 // BEPods represents the predicted number of Back-End Pods.
 type BEPods int
 
