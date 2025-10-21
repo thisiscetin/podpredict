@@ -1,13 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
-############################
 # 1) Build stage
-############################
 FROM golang:1.25 as builder
-
-# Enable Go module proxy/cache in CI if needed:
-# ARG GOPROXY=https://proxy.golang.org,direct
-# ENV GOPROXY=$GOPROXY
 
 WORKDIR /src
 
@@ -33,9 +27,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
       -ldflags="-s -w" \
       -o /out/server ./cmd/server
 
-############################
 # 2) Runtime stage
-############################
 # Use distroless base (has CA certs, runs as non-root)
 FROM gcr.io/distroless/base-debian12:nonroot
 
@@ -56,11 +48,5 @@ COPY --from=builder /out/server /app/server
 
 # Non-root by default in this image
 USER nonroot:nonroot
-
-# Your server listens on 8080 (from your API examples)
 EXPOSE 8080
-
-# If you later add a /healthz endpoint, you can add a Docker healthcheck in a non-distroless image.
-# Distroless has no shell/curl, so we omit HEALTHCHECK here for minimalism.
-
 ENTRYPOINT ["/app/server"]
